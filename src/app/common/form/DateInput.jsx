@@ -1,13 +1,32 @@
 import React from 'react';
 import { Form, Label } from 'semantic-ui-react';
 import DatePicker from 'react-datepicker';
-import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const DateInput = ({input, width, placeholder, dateFormat, meta: {touched, error}, ...rest}) => {
+const DateInput = ({
+    input: { value, onChange, onBlur },
+    width,
+    placeholder,
+    meta: { touched, error },
+    ...rest
+}) => {
     return (
-        <Form.Field error={touched && !!error}>
-            <DatePicker {...rest} placeholder={placeholder} selected={input.value ? format(new Date(input.value),dateFormat) : null} onChange={input.onChange} onBlur={input.onBlur} />
+        <Form.Field error={touched && !!error} width={width}>
+
+            <DatePicker
+                {...rest}
+                placeholderText={placeholder}
+                selected={
+                    value
+                        ? Object.prototype.toString.call(value) !== '[object Date]'
+                            ? value.toDate()
+                            : value
+                        : null
+                }
+                onChange={onChange}
+                onBlur={(e, val) => onBlur(val)}
+                onChangeRaw={e => e.preventDefault()}
+            />
             {touched && error && <Label basic color='red'>{error}</Label>}
         </Form.Field>
     )
